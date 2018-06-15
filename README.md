@@ -1,0 +1,2 @@
+# h5-SPA-template
+h5活动页初始化模版，包含webpack的development和production配置及eslint配置
