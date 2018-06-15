@@ -1,8 +1,8 @@
 # h5-SPA-template
 h5活动页初始化模版，包含webpack的development和production配置及eslint配置
 
-## usage
-1. run git clone to local env
+## USAGE
+1. git clone到本地环境
 2. run `npm install` 安装依赖
 * 本地开发使用 `npm run server`来跑本地服务器实时预览效果
 * 部署到测试环境的代码使用`npm run start`生成到`public`目录
