@@ -4,7 +4,13 @@ import { MobileLauncher, utils } from './mobileLauncher';
 import '../css/index.css';
 
 document.addEventListener('DOMContentLoaded', () => {
-    new MobileLauncher({
+    axios.defaults.withCredentials = true;
+    axios.defaults.baseURL = 'https://api.example.com';
+    global.config = {
+        axios,
+        requestMethod: 'post'
+    }
+    global.config.launcher = new MobileLauncher({
         useRem: true,
         preloadImage: {
             preloadList: [],  // 预加载图像列表
@@ -24,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 		},
 		wxJSSDKInit: {
-            axios,
             appid: '', // 公众号的appid
             jsApiList: [],  // 授权api列表
             share: {  // 微信分享相关配置 选填
@@ -37,15 +42,30 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
     });
 	
-    const vm = new Vue({
+    global.config.vm = new Vue({
+        el: '#container',
         data: {
 
         },
         mounted: function() {
-
+            // 查询用户当前状态
+            this.checkUserStatus();
         },
         methods: {
-            
+            checkUserStatus: function() {
+                const _this = this;
+                if (global.config.LOGINED) {
+                    // 已登陆，可以执行业务逻辑
+                    // utils.request('/doSomething', { data: 123 })
+                    //     .then((res) => {
+
+                    //     });
+                } else {
+                    setTimeout(function() {
+                        _this.checkUserStatus();
+                    }, 500);
+                }
+            }
         }
     });
 }, false);
