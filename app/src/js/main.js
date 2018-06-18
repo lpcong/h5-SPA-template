@@ -4,11 +4,11 @@ import { MobileLauncher, utils } from './mobileLauncher';
 import '../css/index.css';
 
 document.addEventListener('DOMContentLoaded', () => {
-    axios.defaults.withCredentials = true;
-    axios.defaults.baseURL = 'https://api.example.com';
+    axios.defaults.withCredentials = true; // 用于请求做验证
+    axios.defaults.baseURL = 'https://api.example.com'; // 网络请求的域名，根据需要更新
     global.config = {
         axios,
-        requestMethod: 'post'
+        requestMethod: 'post'  // 网络请求的method，根据需要调整
     }
     global.config.launcher = new MobileLauncher({
         useRem: true,

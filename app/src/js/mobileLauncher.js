@@ -13,6 +13,9 @@ const utils = {
 			document.getElementsByTagName('head')[0].appendChild(script);
 		});
 	},
+	/**
+	 * 获取query里的参数
+	 */
 	get: (name) => {
 		var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
 		var location = decodeURIComponent(window.location.search);
@@ -71,26 +74,25 @@ const utils = {
 		return new Promise((resolve, reject) => {
 			axios[method](url, params)
 				.then((res) => {
-					if (res.status === 200) {
-						res = res.data;
-						if (res.errCode === 10001 && global.wxInitParams) { // token失效通用的错误码，按实际需求调整
-							if (global.config.retryCount < 3) {
-								// token失效 重新登陆
-								global.config.retryCount++;
-								utils.removeCookie('openid');
-								utils.removeCookie('token');
-								global.config.launcher._login();
-							} else {
-								// 重新登陆3次，后台服务出问题
-								console.log('token多次失效');
-
-							}
-						} else {
-							resolve(res);
-						}	
-					} else {
-						reject(res);
+					if (res.status !== 200) {
+						return reject(res);
 					}
+					res = res.data;
+					if (res.errCode === 10001 && global.wxInitParams) { // token失效通用的错误码，按实际需求调整
+						if (global.config.retryCount < 3) {
+							// token失效 重新登陆
+							global.config.retryCount++;
+							utils.removeCookie('openid');
+							utils.removeCookie('token');
+							global.config.launcher._login();
+						} else {
+							// 重新登陆3次，后台服务出问题
+							console.log('token多次失效');
+
+						}
+					} else {
+						resolve(res);
+					}	
 				})
 				.catch((err) => {
 					reject(err);
@@ -197,21 +199,19 @@ class MobileLauncher {
 					url: params.redirectUrl || window.location.href,
 					scope: params.scope || 'snsapi_base'
 				});
-			} else {
-				if (utils.get('state') === 'oauth') {
-					// 获取token 根据实际接口进行调整
-					axios.post('/getAccessToken', { code })
-						.then((res) => {
-							utils.setItem('openId', res.openId);
-							utils.setItem('token', res.token);
-							global.config.LOGINED = true;
-							_this._jssdkConfig();
-						})
-						.catch((err) => {
-							console.log(err);
-							alert('系统异常，请稍候重试');
-						});
-				}
+			} else if (utils.get('state') === 'oauth') {
+				// 获取token 根据实际接口进行调整
+				axios.post('/getAccessToken', { code })
+					.then((res) => {
+						utils.setItem('openId', res.openId);
+						utils.setItem('token', res.token);
+						global.config.LOGINED = true;
+						_this._jssdkConfig();
+					})
+					.catch((err) => {
+						console.log(err);
+						alert('系统异常，请稍候重试');
+					});
 			}
 		} else {
 			global.config.LOGINED = true;
@@ -242,7 +242,7 @@ class MobileLauncher {
 				jsApiList: params.jsApiList // 必填，需要使用的JS接口列表
 			});
 			wx.ready(function(){
-				wx.onMenuShareTimeline({
+				const configs = {
 					title: params.share.title, // 分享标题
 					desc: params.share.desc, // 分享描述
 					link: params.share.link || window.location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -250,16 +250,9 @@ class MobileLauncher {
 					success: function (e) {
 						// 用户点击了分享后执行的回调函数
 					}
-				});
-				wx.onMenuShareAppMessage({
-					title: params.share.title, // 分享标题
-					desc: params.share.desc, // 分享描述
-					link: params.share.link || window.location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-					imgUrl: params.share.imgUrl, // 分享图标
-					success: function () {
-
-					}
-				});
+				};
+				wx.onMenuShareTimeline(configs);
+				wx.onMenuShareAppMessage(configs);
 			});
 		});
 	}
