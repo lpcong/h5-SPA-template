@@ -173,7 +173,7 @@ class MobileLauncher {
 	_wxJSSDKInit(params) {
 		const _this = this;
 		const ua = window.navigator.userAgent.toLowerCase();
-		if (!params.appid || ua.match(/MicroMessenger/i) !== 'micromessenger') return;
+		if (!params.appId || !/MicroMessenger/i.test(ua)) return;
 		utils.loadScript(`http://res.wx.qq.com/open/js/jweixin-1.2.0.js?t=${+new Date()}`)
 			.then(() => {
 				global.wxInitParams = params;
@@ -195,7 +195,7 @@ class MobileLauncher {
 			const code = utils.get('code');
 			if (code === null) {
 				this._userAuthorize({
-					appid: params.appid,
+					appId: params.appId,
 					url: params.redirectUrl || window.location.href,
 					scope: params.scope || 'snsapi_base'
 				});
@@ -224,7 +224,7 @@ class MobileLauncher {
 	 * 用户授权
 	 */
 	_userAuthorize(params) {
-		window.location.href = `ttps://open.weixin.qq.com/connect/oauth2/authorize?appid=${params.appid}&redirect_uri=${encodeURIComponent(params.url)}&response_type=code&scope=${params.scope}&state=oauth#wechat_redirect`;
+		window.location.href = `ttps://open.weixin.qq.com/connect/oauth2/authorize?appId=${params.appId}&redirect_uri=${encodeURIComponent(params.url)}&response_type=code&scope=${params.scope}&state=oauth#wechat_redirect`;
 	}
 	/**
 	 * JSSDK配置

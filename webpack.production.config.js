@@ -24,9 +24,10 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    MiniCssExtractPlugin.loader,  // replace ExtractTextPlugin.extract({..})
-                    "css-loader"
-                ]
+                    { loader: MiniCssExtractPlugin.loader },  // replace ExtractTextPlugin.extract({..})
+                    { loader: "css-loader?minimize" },
+                    { loader: "px2rem-loader", options: { remUnit: 100, remPrecision: 8 } }
+                ],
             },
             {
                 test: /\.(png|jpg|gif|svg|bmp|eot|woff|woff2|ttf)$/,
@@ -34,7 +35,8 @@ module.exports = {
                     loader: 'url-loader',
                     options: {
                         limit: 5 * 1024, // 图片大小 > limit 使用file-loader, 反之使用url-loader
-                        outputPath: 'img/'// 指定打包后的图片位置
+                        outputPath: 'img/', // 指定打包后的图片位置
+                        name: "[name].[ext]"
                     }
                 },
                 exclude: /node_modules/

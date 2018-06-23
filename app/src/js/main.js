@@ -5,7 +5,7 @@ import '../css/index.css';
 
 document.addEventListener('DOMContentLoaded', () => {
     axios.defaults.withCredentials = true; // 用于请求做验证
-    axios.defaults.baseURL = 'https://api.example.com'; // 网络请求的域名，根据需要更新
+    axios.defaults.baseURL = 'http://www.example.com/api'; // 网络请求的域名，根据需要更新
     global.config = {
         axios,
         requestMethod: 'post'  // 网络请求的method，根据需要调整
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 		},
 		wxJSSDKInit: {
-            appid: '', // 公众号的appid
+            appId: '', // 公众号的appid
             jsApiList: [],  // 授权api列表
             share: {  // 微信分享相关配置 选填
                 title: '',
